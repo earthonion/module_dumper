@@ -151,7 +151,7 @@ int main() {
         "/system/common/lib/", 
         "/system/priv/lib/", 
         "/system/vsh/", 
-        "/system/sys", 
+        "/system/sys/", 
         "/user/home/", 
          NULL};
          
@@ -160,9 +160,17 @@ int main() {
     uint16_t fw =  kernel_get_fw_version() >> 16;
     printf("Firmware Version: %04x\n", fw);
     
+    char *dest_path = NULL;
+    asprintf(&dest_path, "/mnt/usb0/PS5/libs/%04x/", fw);
+    mkpath(dest_path, 0755);
+        
     int i = 0;
     while(paths[i]){
-        copy_recursive(paths[i], "/mnt/usb0/");
+        
+        copy_recursive(paths[i], dest_path);
+        
+        free(dest_path);
+        
         i++;
     }
     
