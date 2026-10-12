@@ -21,7 +21,7 @@ $(ELF): $(SRCS) $(PAYLOAD_OBJS)
 	
 
 test:
-	nc -q 0 192.168.0.134 9021 < $(ELF)
+	nc -q 0 192.168.0.135 9021 < $(ELF)
 
 clean:
 	rm -f $(ELF)
