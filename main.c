@@ -109,18 +109,22 @@ int copy_recursive(char *src_dir, char *dest_dir) {
     
     while((entry = readdir(src)) != NULL) {
         
-        char *src_path = NULL;
-        char *dest_path = NULL;
+        char src_path[PATH_MAX];
+        char dest_path[PATH_MAX];
+
         
-        asprintf(&src_path, "%s%s", src_dir, entry->d_name);
-        asprintf(&dest_path, "%s%s", dest_dir, entry->d_name);
+        
+        
         
         if(strcmp(".", entry->d_name) && strcmp("..", entry->d_name)){
             
             //if the entry is a directory, mkdir at destination and go a level deeper
             if(entry->d_type == DT_DIR){
                 
-                printf("%s is a directory\n", src_path);
+                printf("Copying: %s\n", src_path);
+                
+                snprintf(src_path, sizeof(src_path), "%s%s/", src_dir, entry->d_name);
+                snprintf(dest_path, sizeof(dest_path), "%s%s/", dest_dir, entry->d_name);
                 
                 mkpath(dest_path, 0755);
                 copy_recursive(src_path, dest_path);
@@ -128,14 +132,17 @@ int copy_recursive(char *src_dir, char *dest_dir) {
             //otherwise copy the file over
             else {
                 
-                printf("%s is not a directory\n", src_path);
+                snprintf(src_path, sizeof(src_path), "%s%s", src_dir, entry->d_name);
+                snprintf(dest_path, sizeof(dest_path), "%s%s", dest_dir, entry->d_name);
                 
+                printf("%s\n", src_path);
+                
+                mkpath(dest_path, 0755);
                 copy_file(src_path, dest_path);
             }
         }
         
-        free(src_path);
-        free(dest_path);
+    
         
     }
     closedir(src);
@@ -168,12 +175,9 @@ int main() {
     while(paths[i]){
         
         copy_recursive(paths[i], dest_path);
-        
-        free(dest_path);
-        
         i++;
     }
-    
+    free(dest_path);
     nlog("Done!");
     return 0;
     
