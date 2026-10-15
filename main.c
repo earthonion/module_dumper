@@ -103,6 +103,8 @@ int copy_file(char *src_path, char *dest_path){
 //copy all files and all nested folders/files
 int copy_recursive(char *src_dir, char *dest_dir) {
     
+    
+    
     DIR *src = opendir(src_dir);
     struct dirent *entry = NULL;
     
@@ -135,9 +137,9 @@ int copy_recursive(char *src_dir, char *dest_dir) {
                 snprintf(src_path, sizeof(src_path), "%s%s", src_dir, entry->d_name);
                 snprintf(dest_path, sizeof(dest_path), "%s%s", dest_dir, entry->d_name);
                 
-                printf("%s\n", src_path);
+                printf("Copying: %s\n", src_path);
                 
-                mkpath(dest_path, 0755);
+                //mkpath(dest_path, 0755);
                 copy_file(src_path, dest_path);
             }
         }
@@ -159,7 +161,7 @@ int main() {
         "/system/priv/lib/", 
         "/system/vsh/", 
         "/system/sys/", 
-        "/user/home/", 
+        //"/user/home/", 
          NULL};
          
     nlog("Module Dumper");
@@ -167,17 +169,23 @@ int main() {
     uint16_t fw =  kernel_get_fw_version() >> 16;
     printf("Firmware Version: %04x\n", fw);
     
-    char *dest_path = NULL;
-    asprintf(&dest_path, "/mnt/usb0/PS5/libs/%04x/", fw);
-    mkpath(dest_path, 0755);
+    
         
     int i = 0;
     while(paths[i]){
         
+        char *dest_path = NULL;
+        asprintf(&dest_path, "/mnt/usb0/PS5/libs/%04x%s", fw, paths[i]);
+        mkpath(dest_path, 0755);
+        
         copy_recursive(paths[i], dest_path);
+        
+        free(dest_path);
+        dest_path = NULL;
+        
         i++;
     }
-    free(dest_path);
+    
     nlog("Done!");
     return 0;
     
