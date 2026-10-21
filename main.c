@@ -161,6 +161,7 @@ int main() {
         "/system/priv/lib/", 
         "/system/vsh/", 
         "/system/sys/", 
+        "/system_ex/app/",
         //"/user/home/", 
          NULL};
          
